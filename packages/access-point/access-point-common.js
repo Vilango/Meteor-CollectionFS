@@ -66,6 +66,7 @@ FS.HTTP.setBaseUrl = function setBaseUrl(newBaseUrl) {
  * @param {String} [options.uploading=null] A URL to return while the file is being uploaded.
  * @param {String} [options.storing=null] A URL to return while the file is being stored.
  * @param {String} [options.filename=null] Override the filename that should appear at the end of the URL. By default it is the name of the file in the requested store.
+ * @param {Boolean} [options.relative=false] Return the URL as a full url or if set to true as relative url.
  *
  * Returns the HTTP URL for getting the file or its metadata.
  */
@@ -80,7 +81,8 @@ FS.File.prototype.url = function(options) {
     brokenIsFine: false,
     uploading: null, // return this URL while uploading
     storing: null, // return this URL while storing
-    filename: null // override the filename that is shown to the user
+    filename: null, // override the filename that is shown to the user
+    relative: false
   }, options.hash || options); // check for "hash" prop if called as helper
 
   // Primarily useful for displaying a temporary image while uploading an image
@@ -165,8 +167,15 @@ FS.File.prototype.url = function(options) {
       area = '/files';
     }
 
+    // set 
+    var urlPrefix = rootUrlPathPrefix;
+    if (options.relative) {
+      urlPrefix = "";
+    }
+    //console.log("urlPrefix", urlPrefix, baseUrl);
+
     // Construct and return the http method url
-    return rootUrlPathPrefix + baseUrl + area + '/' + self.collection.name + '/' + self._id + filename + queryString;
+    return urlPrefix + baseUrl + area + '/' + self.collection.name + '/' + self._id + filename + queryString;
   }
 
 };
